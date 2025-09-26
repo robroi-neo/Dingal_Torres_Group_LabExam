@@ -1,33 +1,35 @@
 <?php
-session_start();
 $heading = "Login";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+session_start();
+$db = new Database(base_path("cce_db.sqlite"));
+$error = [];
 
-    if ($username == "" || $password == "") {
-        echo "All fields are required.";
-        exit;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!Validator::string($_POST['username'] ?? '', 1, 255)) {
+        $error['username'] = "Username is required";
+    }
+    if (!Validator::string($_POST['password'] ?? '', 1, 255)) {
+        $error['password'] = "Password is required";
     }
 
-    $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = :username");
-    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-    $stmt->execute();
+    if (empty($error)) {
+        // Attempt to find user
+        $stmt = $db->query("SELECT * FROM users WHERE username = :username", [
+            ':username' => $_POST['username']
+        ]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user) {
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $username;
-            header("Location: home.php");
-            exit;
+        if (!$user || !password_verify($_POST['password'], $user['password'])) {
+            "<script>
+                alert('Invalid username or password.');
+              </script>";
         } else {
-            echo "Invalid password.";
+            echo "Login successful!";
+
+            $_SESSION['full_name'] = $user['full_name'];
+            header('Location: /');
         }
-    } else {
-        echo "User not found.";
     }
 }
 

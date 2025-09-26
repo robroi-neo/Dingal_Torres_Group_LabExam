@@ -1,52 +1,52 @@
 <?php
 $heading = "Register";
 
+$db = new Database(base_path("cce_db.sqlite"));
+$error = [];
+$registered = false;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST['full_name']);
-    $email = trim($_POST['email']);
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
-
-    if ($name == "" || $email == "" || $username == "" || $password == "") {
-        echo "All fields are required.";
-        exit;
+    if (!Validator::string($_POST['full_name'] ?? '', 1, 255)) {
+        $error['full_name'] = "Full Name is required";
     }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "Invalid email format.";
-        exit;
+    if (!Validator::string($_POST['email'] ?? '', 1, 255)) {
+        $error['email'] = "Email is required";
+    }
+    if (!Validator::string($_POST['username'] ?? '', 1, 255)) {
+        $error['username'] = "Username is required";
+    }
+    if (!Validator::string($_POST['password'] ?? '', 1, 255)) {
+        $error['password'] = "Password is required";
     }
     if (!Validator::compareStrings($_POST['password'] ?? '', $_POST['confirm_password'] ?? '')) {
         echo "Passwords do not match";
     }
-
-    // Check if username or email already exists
-    $check = $conn->prepare("SELECT id FROM users WHERE username = :username OR email = :email");
-    $check->bindParam(':username', $username, PDO::PARAM_STR);
-    $check->bindParam(':email', $email, PDO::PARAM_STR);
-    $check->execute();
-
-    if ($check->fetch(PDO::FETCH_ASSOC)) {
-        echo "Username or Email already exists.";
-        exit;
-    }
-
-    // Hash password
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-    // Insert new user
-    $stmt = $conn->prepare("INSERT INTO users (name, email, username, password) 
-                            VALUES (:name, :email, :username, :password)");
-    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-    $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
-
-    if ($stmt->execute()) {
-        header("Location: login.php?registered=1");
-        exit;
+    if (!empty($error)) {
+        $_POST = [];
     } else {
-        echo "Error: Could not register user.";
+        try {
+            $db->beginTransaction();
+
+            // Insert into users
+            $db->query("
+        INSERT INTO users (full_name, email, username, password)
+        VALUES (:full_name, :email, :username, :password)
+    ", [
+                ':full_name' => $_POST['full_name'],
+                ':email' => $_POST['email'],
+                ':username' => $_POST['username'],
+                ':password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
+            ]);
+
+            $user_id = $db->lastInsertId();
+
+            $registered = true;
+            $_POST = [];
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollBack();
+            echo "Error: " . $e->getMessage();
+        }
     }
 }
 

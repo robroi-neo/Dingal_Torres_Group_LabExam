@@ -24,9 +24,9 @@
         <form action="/login" method="POST" class="space-y-4">
             <!-- Email -->
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-                <input id="email" name="email" type="email" required
-                    class="block w-full px-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-green-700" placeholder="you@example.com">
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <input id="username" name="username" type="name" required
+                    class="block w-full px-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-green-700" placeholder="username">
             </div>
 
             <!-- Password -->
