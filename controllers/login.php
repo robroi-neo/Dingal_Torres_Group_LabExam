@@ -2,6 +2,7 @@
 $heading = "Login";
 
 session_start();
+
 $db = new Database(base_path("cce_db.sqlite"));
 $error = [];
 
@@ -25,9 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 alert('Invalid username or password.');
               </script>";
         } else {
-            echo "Login successful!";
-
-            $_SESSION['full_name'] = $user['full_name'];
+            $_SESSION['username'] = $user['username'];
             header('Location: /');
         }
     }
