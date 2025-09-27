@@ -43,6 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $registered = true;
             $_POST = [];
             $db->commit();
+            header('Location: /login');
         } catch (Exception $e) {
             $db->rollBack();
             echo "Error: " . $e->getMessage();

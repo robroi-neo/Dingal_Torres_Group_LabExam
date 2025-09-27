@@ -66,7 +66,7 @@
 </section>
 
 <!-- Contact Us -->
-<section class="max-w-7xl mx-auto px-6 sm:px-10 py-10 flex flex-col" id="connect-with-us">
+<section class="max-w-7xl mx-auto px-6 sm:px-10 py-10 flex flex-col" id="contact-us">
     <h1 class="text-2xl sm:text-3xl font-bold mb-8">Connect With Us</h1>
     <h3 class="text-lg sm:text-xl mb-4">Follow us on our social media platforms to stay updated with the latest news and events!</h3>
     <div class="flex flex-wrap gap-6 items-center">

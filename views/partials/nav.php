@@ -1,7 +1,4 @@
 <!-- Navbar -->
-<?php
-var_dump($_SESSION);
-?>
 <nav class="shadow-md sticky top-0 bg-white/80 z-10 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <!-- Logo -->
@@ -11,12 +8,21 @@ var_dump($_SESSION);
                 UM <span class="text-green-900">CCE</span>
             </p>
         </a>
+        <div class="hidden md:flex space-x-6">
+            <?php if ($_SERVER['REQUEST_URI'] == '/'): ?>
+                <a href="#" class="hover:text-neutral-800">Home</a>
+                <a href="#about-us" class="ml-4 hover:text-neutral-800">About</a>
+                <a href="#recent-events" class="ml-4 hover:text-neutral-800">Recent Events</a>
+                <a href="#contact-us" class="ml-4 hover:text-neutral-800">Contact</a>
+            <?php endif; ?>
+        </div>
 
         <!-- Desktop Menu -->
         <div class="hidden md:flex space-x-6">
+
             <?php if (isset($_SESSION['username'])): ?>
                 <!-- If logged in -->
-                <a href="/logout" class="hover:text-red-800">Logout</a>
+                <a href="/logout" class="hover:text-red-500">Logout</a>
             <?php else: ?>
                 <!-- If not logged in -->
                 <a href="/login" class="hover:text-neutral-800">Login</a>
